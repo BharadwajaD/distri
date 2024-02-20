@@ -1,21 +1,18 @@
 package system
 
-const PROCESS_COUNT = 4
-
-
-type System struct{
-    Processes [PROCESS_COUNT]Process
+type System struct {
+	Processes []Process
 }
 
-func NewSystems() System {
+func NewSystems(pcount int) System {
 
-    var processes [PROCESS_COUNT]Process;
+	processes := make([]Process, pcount)
 
-    for i := 0; i < PROCESS_COUNT; i++ {
-        processes[i] = NewProcess(i);
-    }
+	for i := 0; i < pcount; i++ {
+		processes[i] = NewProcess(i, pcount)
+	}
 
-    return System{
-        Processes: processes,
-    }
+	return System{
+		Processes: processes,
+	}
 }

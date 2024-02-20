@@ -1,30 +1,38 @@
 package system
 
-type Message interface {}
+import "fmt"
+
 
 type Process struct {
-    id int
-    channels [PROCESS_COUNT]chan Message
+	id       int
+	channels []Channel
 }
 
-func NewProcess(id int) Process{
+func NewProcess(id, pcount int) Process {
 
-    var channels [PROCESS_COUNT]chan Message
+	channels := make([]Channel, pcount)
 
-    for i := 0; i < PROCESS_COUNT; i++ {
-        channels[i] = make(chan Message)
-    }
-
-    return Process{
-        id: id,
-        channels: channels,
-    }
+	for i := 0; i < pcount; i++ {
+		if id != i {
+			channels[i] = NewChannel()
+		}
+	}
+	return Process{
+		id: id,
+	}
 }
 
-func (p* Process) send(id int, msg *Message) {
-    p.channels[id] <- msg
+func (p *Process) Exec(fn func()) {
+
+    fmt.Printf("From pid: %d\n", p.id);
+	fn()
+
 }
 
-func (p* Process) recv(id int) Message {
-    return  <-p.channels[id]
+func (p *Process) Send(to int, msg *Message) {
+	p.channels[to].send(msg)
+}
+
+func (p *Process) Recv(from int) Message {
+	return p.channels[from].recv()
 }
